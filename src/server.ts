@@ -26,6 +26,8 @@ interface FormData {
 
 app.post('/api/generate-ticket', async (req: Request, res: Response) => {
   const data: FormData = req.body;
+  console.log(data)
+
 
   if (!data.name || !data.services || !data.fila) {
     res.status(400).json({ message: 'Os campos nome, serviço e fila são obrigatórios.' });
@@ -168,6 +170,8 @@ app.get('/api/tickets', async (req: Request, res: Response) => {
         `;
         
         const [rows] = await connection.execute(sql);
+
+        console.log(rows)
         
         res.status(200).json(rows);
         return;
