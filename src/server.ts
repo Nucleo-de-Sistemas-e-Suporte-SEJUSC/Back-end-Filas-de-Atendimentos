@@ -106,7 +106,7 @@ app.patch('/api/tickets/:id/status', async (req: Request, res: Response) => {
   const { id } = req.params; // Pega o ID do ticket da URL
   const { status } = req.body; // Pega o novo status do corpo da requisição ('ATENDIDO' ou 'AUSENTE')
 
-  if (!status || !['ATENDIDO', 'AUSENTE', 'EM_ATENDIMENTO'].includes(status)) {
+  if (!status || !['ATENDIDO', 'AUSENTE', 'EM ATENDIMENTO'].includes(status)) {
     return;
   }
 
@@ -121,7 +121,7 @@ app.patch('/api/tickets/:id/status', async (req: Request, res: Response) => {
       // Se a pessoa foi atendida, apenas atualiza o status
       sql = 'UPDATE tickets SET status = ? WHERE id = ?';
       values = [status, id];
-    } else if (status === 'EM_ATENDIMENTO') {
+    } else if (status === 'EM ATENDIMENTO') {
       // Se a pessoa está em atendimento, atualiza o status e a hora da chamada
       sql = 'UPDATE tickets SET status = ?, ultima_chamada_em = NOW() WHERE id = ?';
       values = [status, id];
@@ -164,7 +164,7 @@ app.get('/api/tickets', async (req: Request, res: Response) => {
                 -- OU quem estava ausente e já pode ser chamado de novo
                 OR (status = 'AUSENTE' AND ultima_chamada_em <= NOW() - INTERVAL 10 SECOND)
                 -- OU quem está em atendimento
-                OR status = 'EM_ATENDIMENTO'
+                OR status = 'EM ATENDIMENTO'
             -- Ordena o resultado final pela ordem de chegada
             ORDER BY created_at ASC
             
