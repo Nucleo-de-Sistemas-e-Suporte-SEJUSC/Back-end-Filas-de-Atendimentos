@@ -54,7 +54,7 @@ app.post('/api/generate-ticket', async (req: Request, res: Response) => {
     const [existingTickets] = await connection.execute(checkCooldownSql, [data.name]);
 
     if (Array.isArray(existingTickets) && existingTickets.length > 0) {
-      res.status(409).json({ message: 'Você já realizou um atendimento nos últimos 20 minutos. Por favor, aguarde.' });
+      res.status(409).json({ message: 'Você já realizou um atendimento nos últimos 20 segundos. Por favor, aguarde.' });
       await connection.end();
       return;
     }
@@ -93,11 +93,6 @@ app.post('/api/generate-ticket', async (req: Request, res: Response) => {
     if (connection) await connection.rollback();
     console.error('Erro no servidor:', error);
 
-    if (error.code === 'ER_DUP_ENTRY' && error.sqlMessage?.includes('cpf')) {
-      res.status(409).json({ message: 'Este CPF (quando fornecido) já foi cadastrado.' });
-      return;
-    }
-
     res.status(500).json({ message: 'Ocorreu um erro no servidor.' });
   } finally {
     if (connection) {
@@ -107,12 +102,11 @@ app.post('/api/generate-ticket', async (req: Request, res: Response) => {
 });
 
 
-
 app.patch('/api/tickets/:id/status', async (req: Request, res: Response) => {
   const { id } = req.params; // Pega o ID do ticket da URL
   const { status } = req.body; // Pega o novo status do corpo da requisição ('ATENDIDO' ou 'AUSENTE')
 
-  if (!status || !['ATENDIDO', 'AUSENTE'].includes(status)) {
+  if (!status || !['ATENDIDO', 'AUSENTE', 'EM ATENDIMENTO'].includes(status)) {
     return;
   }
 
@@ -127,11 +121,15 @@ app.patch('/api/tickets/:id/status', async (req: Request, res: Response) => {
       // Se a pessoa foi atendida, apenas atualiza o status
       sql = 'UPDATE tickets SET status = ? WHERE id = ?';
       values = [status, id];
+    } else if (status === 'EM ATENDIMENTO') {
+      // Se a pessoa está em atendimento, atualiza o status e a hora da chamada
+      sql = 'UPDATE tickets SET status = ?, ultima_chamada_em = NOW() WHERE id = ?';
+      values = [status, id];
     } else { // status === 'AUSENTE'
       // Se a pessoa não compareceu, atualiza o status E a hora da chamada
       sql = 'UPDATE tickets SET status = ?, ultima_chamada_em = NOW() WHERE id = ?';
       values = [status, id];
-    }
+    } 
 
     const [result] = await connection.execute(sql, values);
     
