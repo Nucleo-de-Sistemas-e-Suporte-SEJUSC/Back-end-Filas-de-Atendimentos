@@ -60,7 +60,7 @@ app.post('/api/generate-ticket', async (req: Request, res: Response) => {
     }
 
     const [countResult] = await connection.execute(countSql, [data.services, data.fila]);
-    
+
     const count = (countResult as any)[0].daily_count;
     const nextNumber = count + 1;
 
@@ -69,10 +69,10 @@ app.post('/api/generate-ticket', async (req: Request, res: Response) => {
 
 
     const ticketNumber = `${data.services}-${data.fila}-${formattedNumber}`;
-    
+
     const insertSql = 'INSERT INTO tickets (cpf, name, service, queue_type, ticket_number) VALUES (?, ?, ?, ?, ?)';
     const values = [data.cpf || null, data.name, data.services, data.fila, ticketNumber];
-    
+
     const [result] = await connection.execute(insertSql, values);
     const insertedId = (result as any).insertId;
 
@@ -82,10 +82,10 @@ app.post('/api/generate-ticket', async (req: Request, res: Response) => {
 
     res.status(201).json({
       message: 'Senha gerada com sucesso!',
-      ticket: { 
-        id: insertedId, 
+      ticket: {
+        id: insertedId,
         ticket_number: ticketNumber,
-        ...data 
+        ...data
       },
     });
 
@@ -106,14 +106,14 @@ app.patch('/api/tickets/:id/status', async (req: Request, res: Response) => {
   const { id } = req.params; // Pega o ID do ticket da URL
   const { status } = req.body; // Pega o novo status do corpo da requisição ('ATENDIDO' ou 'AUSENTE')
 
-  if (!status || !['ATENDIDO', 'AUSENTE', 'EM ATENDIMENTO'].includes(status)) {
+  if (!status || !['ATENDIDO', 'AUSENTE', 'EM ATENDIMENTO', 'CHAMADO'].includes(status)) {
     return;
   }
 
   let connection;
   try {
     connection = await mysql.createConnection(dbConfig);
-    
+
     let sql: string;
     let values: (string | number)[] = [];
 
@@ -121,18 +121,22 @@ app.patch('/api/tickets/:id/status', async (req: Request, res: Response) => {
       // Se a pessoa foi atendida, apenas atualiza o status
       sql = 'UPDATE tickets SET status = ? WHERE id = ?';
       values = [status, id];
+    } else if (status === 'CHAMADO') {
+      // Se a pessoa foi chamada, atualiza o status e a hora da chamada
+      sql = 'UPDATE tickets SET status = ?, ultima_chamada_em = NOW() WHERE id = ?';
+      values = [status, id];
     } else if (status === 'EM ATENDIMENTO') {
-      // Se a pessoa está em atendimento, atualiza o status e a hora da chamada
+      // Se a pessoa está em atendimento, atualiza o status e a hora do atendimento
       sql = 'UPDATE tickets SET status = ?, ultima_chamada_em = NOW() WHERE id = ?';
       values = [status, id];
     } else { // status === 'AUSENTE'
       // Se a pessoa não compareceu, atualiza o status E a hora da chamada
       sql = 'UPDATE tickets SET status = ?, ultima_chamada_em = NOW() WHERE id = ?';
       values = [status, id];
-    } 
+    }
 
     const [result] = await connection.execute(sql, values);
-    
+
 
     if ((result as any).affectedRows === 0) {
       return;
@@ -151,12 +155,12 @@ app.patch('/api/tickets/:id/status', async (req: Request, res: Response) => {
 });
 
 app.get('/api/tickets', async (req: Request, res: Response) => {
-    let connection;
-    try {
-        connection = await mysql.createConnection(dbConfig);
-        
-     
-        const sql = `
+  let connection;
+  try {
+    connection = await mysql.createConnection(dbConfig);
+
+
+    const sql = `
             SELECT * FROM tickets
             WHERE 
                 -- Pega quem está aguardando...
@@ -165,27 +169,29 @@ app.get('/api/tickets', async (req: Request, res: Response) => {
                 OR (status = 'AUSENTE' AND ultima_chamada_em <= NOW() - INTERVAL 10 SECOND)
                 -- OU quem está em atendimento
                 OR status = 'EM ATENDIMENTO'
+
+                OR status = 'CHAMADO'
             -- Ordena o resultado final pela ordem de chegada
             ORDER BY created_at ASC
             
         `;
-        
-        const [rows] = await connection.execute(sql);
 
-        console.log(rows)
-        
-        res.status(200).json(rows);
-        return;
+    const [rows] = await connection.execute(sql);
 
-    } catch (error) {
-        console.error("Erro ao buscar a fila de tickets:", error);
-        res.status(500).json({ message: "Ocorreu um erro no servidor ao buscar a fila." });
-        return;
-    } finally {
-        if (connection) {
-            await connection.end();
-        }
+    console.log(rows)
+
+    res.status(200).json(rows);
+    return;
+
+  } catch (error) {
+    console.error("Erro ao buscar a fila de tickets:", error);
+    res.status(500).json({ message: "Ocorreu um erro no servidor ao buscar a fila." });
+    return;
+  } finally {
+    if (connection) {
+      await connection.end();
     }
+  }
 });
 
 
