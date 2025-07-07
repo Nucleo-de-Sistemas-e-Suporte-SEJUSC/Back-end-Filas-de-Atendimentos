@@ -19,6 +19,6 @@ export async function attendanceRoutes(fastify: FastifyInstance) {
     fastify.get('/', (req, reply) => getAttendanceController.get(req, reply))
 
     const updateAttendanceService = new UpdateAttendanceService(repo)
-    const updateAttendanceController= new UpdateAttendanceController(repo)
+    const updateAttendanceController= new UpdateAttendanceController(updateAttendanceService)
     fastify.patch('/:id', (req, reply) => updateAttendanceController.update(req, reply))
 }
