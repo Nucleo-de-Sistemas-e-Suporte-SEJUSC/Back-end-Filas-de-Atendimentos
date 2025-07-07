@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/infra/db/prisma/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum AttendanceStatus {
+  AGUARDANDO
+  CHAMADO
+  ATENDIMENTO
+  ATENDIDO
+  AUSENTE
+}
+
+enum AttendanceQueueType {
+  N
+  P
+}
+
+enum AttendanceService {
+  PAV
+  RCN
+}
+
+model Attendance {
+  id Int @id @default(autoincrement())
+  cpf String
+  name String
+  ticket_number String
+  guiche String?
+  service AttendanceService
+  queue_type AttendanceQueueType
+  status AttendanceStatus @default(AGUARDANDO)
+  created_at DateTime @default(now())
+  last_call_at DateTime @updatedAt
+
+  @@map("attendance")
+}
