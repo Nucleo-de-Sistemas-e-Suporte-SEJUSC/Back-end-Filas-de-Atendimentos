@@ -29,5 +29,5 @@ app.register(attendanceRoutes, {
 })
 
 app.listen({ port:8080 }, () => {
-    console.log('Server running on port 8080')
+    console.log('Server running on port 8080. Its Works')
 })
