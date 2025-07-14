@@ -114,6 +114,9 @@ Prisma.NullTypes = {
  */
 
 exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
+  ReadUncommitted: 'ReadUncommitted',
+  ReadCommitted: 'ReadCommitted',
+  RepeatableRead: 'RepeatableRead',
   Serializable: 'Serializable'
 });
 
@@ -138,6 +141,13 @@ exports.Prisma.SortOrder = {
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
+};
+
+exports.Prisma.AttendanceOrderByRelevanceFieldEnum = {
+  cpf: 'cpf',
+  name: 'name',
+  ticket_number: 'ticket_number',
+  guiche: 'guiche'
 };
 exports.AttendanceService = exports.$Enums.AttendanceService = {
   PAV: 'PAV',

@@ -50,7 +50,6 @@ export class PrismaAttendanceRepository implements IAttendanceRepository {
     async findAll(): Promise<AttendanceEntity[]> {
         const result = await prisma.attendance.findMany()
         return result.map((result, index) => {
-            console.log(`[${index}]`, result)
             return new AttendanceEntity(
                 result.cpf,
                 result.name,
