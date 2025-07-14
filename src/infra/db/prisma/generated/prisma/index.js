@@ -87,6 +87,9 @@ Prisma.NullTypes = {
  * Enums
  */
 exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
+  ReadUncommitted: 'ReadUncommitted',
+  ReadCommitted: 'ReadCommitted',
+  RepeatableRead: 'RepeatableRead',
   Serializable: 'Serializable'
 });
 
@@ -111,6 +114,13 @@ exports.Prisma.SortOrder = {
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
+};
+
+exports.Prisma.AttendanceOrderByRelevanceFieldEnum = {
+  cpf: 'cpf',
+  name: 'name',
+  ticket_number: 'ticket_number',
+  guiche: 'guiche'
 };
 exports.AttendanceStatus = exports.$Enums.AttendanceStatus = {
   AGUARDANDO: 'AGUARDANDO',
@@ -144,7 +154,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/yuri/Desktop/siaf/src/infra/db/prisma/generated/prisma",
+      "value": "/home/yuri/Documents/Back-end-Filas-de-Atendimentos/src/infra/db/prisma/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -158,11 +168,11 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/yuri/Desktop/siaf/prisma/schema.prisma",
+    "sourceFilePath": "/home/yuri/Documents/Back-end-Filas-de-Atendimentos/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": "../../../../../../.env",
+    "rootEnvPath": null,
     "schemaEnvPath": "../../../../../../.env"
   },
   "relativePath": "../../../../../../prisma",
@@ -171,8 +181,7 @@ const config = {
   "datasourceNames": [
     "db"
   ],
-  "activeProvider": "sqlite",
-  "postinstall": false,
+  "activeProvider": "mysql",
   "inlineDatasources": {
     "db": {
       "url": {
@@ -181,8 +190,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/infra/db/prisma/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"sqlite\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum AttendanceStatus {\n  AGUARDANDO\n  CHAMADO\n  ATENDIMENTO\n  ATENDIDO\n  AUSENTE\n}\n\nenum AttendanceQueueType {\n  N\n  P\n}\n\nenum AttendanceService {\n  PAV\n  RCN\n}\n\nmodel Attendance {\n  id            Int                 @id @default(autoincrement())\n  cpf           String\n  name          String\n  ticket_number String\n  guiche        String?\n  service       AttendanceService\n  queue_type    AttendanceQueueType\n  status        AttendanceStatus    @default(AGUARDANDO)\n  created_at    DateTime            @default(now())\n  last_call_at  DateTime            @updatedAt\n\n  @@map(\"attendance\")\n}\n",
-  "inlineSchemaHash": "2dc28f6bd2dec8035d98cd109905f0453348fdc71890615f7e54075fd8307f9a",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/infra/db/prisma/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"mysql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum AttendanceStatus {\n  AGUARDANDO\n  CHAMADO\n  ATENDIMENTO\n  ATENDIDO\n  AUSENTE\n}\n\nenum AttendanceQueueType {\n  N\n  P\n}\n\nenum AttendanceService {\n  PAV\n  RCN\n}\n\nmodel Attendance {\n  id            Int                 @id @default(autoincrement())\n  cpf           String\n  name          String\n  ticket_number String\n  guiche        String?\n  service       AttendanceService\n  queue_type    AttendanceQueueType\n  status        AttendanceStatus    @default(AGUARDANDO)\n  created_at    DateTime            @default(now())\n  last_call_at  DateTime            @updatedAt\n\n  @@map(\"attendance\")\n}\n",
+  "inlineSchemaHash": "eda3cc5994cf1fa7f420295563b0f1457efbaa0e9e83263ec9da0d46e0ba3236",
   "copyEngine": true
 }
 
