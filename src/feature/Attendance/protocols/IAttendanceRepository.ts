@@ -1,4 +1,5 @@
 import { AttendanceEntity } from "../entities/AttendanceEntity";
+import { AttendanceStatus } from "./EAttendanceStatus";
 import { IAttendanceModel } from "./IAttendanceModel";
 
 export interface IAttendanceRepository {
@@ -7,5 +8,5 @@ export interface IAttendanceRepository {
     countByServiceAndQueueType(service: 'PAV' | 'RCN', queueType: 'P' | 'N'): Promise<number>
     findAll(): Promise<AttendanceEntity[]>
     findById(id: string): Promise<AttendanceEntity | null>
-    update(id: string, status: 'AGUARDANDO' | 'CHAMADO' | 'ATENDIMENTO' | 'ATENDIDO' | 'AUSENTE', guiche?: string): Promise<AttendanceEntity>
+    update(id: string, status: AttendanceStatus, guiche?: string): Promise<AttendanceEntity>
 }

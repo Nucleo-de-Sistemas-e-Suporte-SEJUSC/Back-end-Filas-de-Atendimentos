@@ -1,5 +1,6 @@
 import { prisma } from "./PrismaClient";
 import { AttendanceEntity } from "@/feature/Attendance/entities/AttendanceEntity";
+import { EAttendanceStatus } from "@/feature/Attendance/protocols/EAttendanceStatus";
 import { IAttendanceModel } from "@/feature/Attendance/protocols/IAttendanceModel";
 import { IAttendanceRepository } from "@/feature/Attendance/protocols/IAttendanceRepository";
 
@@ -76,10 +77,11 @@ export class PrismaAttendanceRepository implements IAttendanceRepository {
             result.service,
             result.queue_type,
             result.ticket_number,
+            result.status
         ) : null
     }
 
-    async update(id: string, status: "AGUARDANDO" | "CHAMADO" | "ATENDIMENTO" | "ATENDIDO" | "AUSENTE", guiche?: string): Promise<AttendanceEntity> {
+    async update(id: string, status: EAttendanceStatus, guiche?: string): Promise<AttendanceEntity> {
         const result = await prisma.attendance.update({
             where: { id: Number(id) },
             data: { status, guiche }
