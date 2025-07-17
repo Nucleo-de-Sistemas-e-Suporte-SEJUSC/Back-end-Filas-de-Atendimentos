@@ -25,9 +25,9 @@ app.register(fastifySwaggerUi, {
 })
 
 app.register(attendanceRoutes, {
-    prefix: '/v1/attendance',
+    prefix: '/api/attendance',
 })
 
-app.listen({ port:8080 }, () => {
-    console.log('Server running on port 8080. Its Works')
+app.listen({ port:8004 }, () => {
+    console.log('Server running on port 8004. Its Works')
 })
