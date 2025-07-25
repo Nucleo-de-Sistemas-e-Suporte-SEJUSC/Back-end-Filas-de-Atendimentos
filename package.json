@@ -1,21 +1,22 @@
 {
   "name": "sistema-integrado-atendimentos-filas",
   "version": "1.0.0",
-  "main": "dist/index.js",
+  "main": "dist/index.cjs",
   "type": "module",
   "engines": {
-    "node": "22.16.0"
+    "node": ">=22"
   },
   "scripts": {
     "dev": "tsx watch src/infra/http/fastify/server.ts",
-    "build": "tsc",
-    "start": "node dist/infra/http/fastify/server.js"
+    "build": "esbuild src/infra/http/fastify/server.ts --bundle --platform=node --target=node22 --outfile=dist/index.cjs --external:./node_modules/* --minify && cp prisma/schema.prisma dist/schema.prisma && npx prisma generate",
+    "start": "node dist/index.cjs"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "API para coletar dados da quantidade de Atendimentos e otimizar o Atendimento e a fila nas ações.",
+  "description": "API do sistema integrado ao atendimento dos beneficiários e ao gerenciamento das filas capaz de coletar informações da Ação.",
   "devDependencies": {
+    "esbuild": "0.25.8",
     "prisma": "^6.11.1",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3"
@@ -25,6 +26,7 @@
     "@fastify/swagger": "^9.5.1",
     "@fastify/swagger-ui": "^5.2.3",
     "@prisma/client": "^6.11.1",
+    "dotenv": "^17.2.1",
     "fastify": "^5.4.0"
   }
 }
