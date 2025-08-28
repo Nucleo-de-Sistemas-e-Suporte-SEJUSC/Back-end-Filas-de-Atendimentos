@@ -1,7 +1,0 @@
-export enum EAttendanceStatus {
-  AGUARDANDO = "AGUARDANDO",
-  CHAMADO = "CHAMADO",
-  ATENDIMENTO = "ATENDIMENTO",
-  ATENDIDO = "ATENDIDO",
-  AUSENTE = "AUSENTE",
-}
