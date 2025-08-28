@@ -22,9 +22,7 @@ export class UpdateAttendanceService implements IUpdateAttendance {
 			);
 
 		if (alreadyExistAnAttendance?.status !== prevStatus)
-			throw new AlreadyStatusModifiedError(
-				"O status do atendimento já foi modificado, atualize a página",
-			);
+			throw new AlreadyStatusModifiedError();
 
 		return await this.repo.update(id, status, guiche);
 	}

@@ -8,5 +8,5 @@ Os Beneficiários devem conseguir realizar o Autoatendimento e os Funcionários 
 
 # Requisitos Funcionais
 
--[] Criar Atendimentos
--[] Atualizar Atendimentos
+-[x] Criar Atendimentos
+-[x] Atualizar Atendimentos

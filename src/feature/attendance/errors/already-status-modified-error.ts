@@ -1,9 +1,12 @@
 export class AlreadyStatusModifiedError extends Error {
-	private code: number;
-	constructor(message: string, code: number = 400) {
-		super(message);
+	public readonly statusCode: number;
+	public readonly code: string;
+	public readonly error: string;
+	constructor() {
+		super("O status do atendimento já foi modificado, atualize a página");
 		this.name = "AlreadyStatusModifiedError";
-		this.message = message;
-		this.code = code;
+		this.statusCode = 409;
+		this.code = "CONFLICT_ERROR";
+		this.error = "Bad Request";
 	}
 }
