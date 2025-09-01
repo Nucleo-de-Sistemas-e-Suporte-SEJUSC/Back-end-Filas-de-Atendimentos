@@ -1,5 +1,8 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
+import { InternalServerError } from "@/feature/errors/internal-server-error";
 import type { AttendanceDTO } from "../dto/attendance-dto";
+import { AlreadyStatusModifiedError } from "../errors/already-status-modified-error";
+import { ExistAnAttendanceError } from "../errors/exist-an-attendance-error";
 import type { EAttendanceStatus } from "../protocols/attendance-status-enum";
 import type { IUpdateAttendance } from "../protocols/update-attendance-interface";
 
@@ -20,8 +23,14 @@ export class UpdateAttendanceController {
 			await this.service.update(id, prevStatus, status, guiche);
 			return reply.status(200).send();
 		} catch (error) {
-			console.error(error);
-			return reply.status(400).send(error);
+			if (
+				error instanceof ExistAnAttendanceError ||
+				error instanceof AlreadyStatusModifiedError
+			) {
+				return reply.status(error.statusCode).send(error);
+			}
+
+			return reply.status(500).send(new InternalServerError());
 		}
 	}
 }

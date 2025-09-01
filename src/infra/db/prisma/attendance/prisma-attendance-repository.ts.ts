@@ -2,7 +2,7 @@ import { AttendanceDTO } from "@/feature/attendance/dto/attendance-dto";
 import type { IAttendanceModel } from "@/feature/attendance/protocols/attendance-model-interface";
 import type { IAttendanceRepository } from "@/feature/attendance/protocols/attendance-repository-interface";
 import type { EAttendanceStatus } from "@/feature/attendance/protocols/attendance-status-enum";
-import { prisma } from "./PrismaClient";
+import { prisma } from "../prisma-client";
 
 export class PrismaAttendanceRepository implements IAttendanceRepository {
 	async create(

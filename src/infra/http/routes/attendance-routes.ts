@@ -1,3 +1,4 @@
+import type { FastifyInstance } from "fastify";
 import { CreateAttendanceController } from "@/feature/attendance/create-attendance/create-attendance-controller";
 import { CreateAttendanceService } from "@/feature/attendance/create-attendance/create-attendance-service";
 import { GetAttendanceController } from "@/feature/attendance/get-attendance/get-attendance-controller";
@@ -7,10 +8,9 @@ import { getAttendanceSchema } from "@/feature/attendance/schemas/get-attendance
 import { updateAttendanceSchema } from "@/feature/attendance/schemas/update-attendance-schema";
 import { UpdateAttendanceController } from "@/feature/attendance/update-attendance/update-attendance-controller";
 import { UpdateAttendanceService } from "@/feature/attendance/update-attendance/update-attendance-service";
-import { PrismaAttendanceRepository } from "@/infra/db/prisma/PrismaAttendanceRepository";
-import type { FastifyTypedProvider } from "./fastify-typed-provider";
+import { PrismaAttendanceRepository } from "@/infra/db/prisma/attendance/prisma-attendance-repository.ts";
 
-export async function attendanceRoutes(fastify: FastifyTypedProvider) {
+export async function attendanceRoutes(fastify: FastifyInstance) {
 	const repo = new PrismaAttendanceRepository();
 
 	const createAttendanceService = new CreateAttendanceService(repo);
@@ -41,7 +41,11 @@ export async function attendanceRoutes(fastify: FastifyTypedProvider) {
 	const updateAttendanceController = new UpdateAttendanceController(
 		updateAttendanceService,
 	);
-	fastify.patch("/:id", { schema: updateAttendanceSchema }, (req, reply) =>
-		updateAttendanceController.update(req, reply),
+	fastify.patch(
+		"/:id",
+		{
+			schema: updateAttendanceSchema,
+		},
+		(req, reply) => updateAttendanceController.update(req, reply),
 	);
 }

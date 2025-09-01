@@ -1,28 +1,48 @@
-import z from "zod";
+export const attendanceItemSchema = {
+	$id: "attendanceItemSchema",
+	type: "object",
+	properties: {
+		id: { type: "number" },
+		cpf: { type: "string" },
+		name: { type: "string" },
+		service: { type: "string" },
+		queue_type: { type: "string" },
+		ticket_number: { type: "string" },
+		status: {
+			type: "string",
+			enum: ["AGUARDANDO", "CHAMADO", "ATENDIMENTO", "ATENDIDO", "AUSENTE"],
+		},
+		guiche: {
+			type: "string",
+		},
+	},
+	required: [
+		"id",
+		"cpf",
+		"name",
+		"service",
+		"queue_type",
+		"ticket_number",
+		"status",
+		"guiche",
+	],
+} as const;
+
+export const getAttendanceResponseSchema = {
+	$id: "getAttendanceResponseSchema",
+	type: "array",
+	items: {
+		attendanceItemSchema,
+	},
+} as const;
 
 export const getAttendanceSchema = {
-	description: "Buscar uma lista de Atendimentos",
+	$id: "getAttendanceSchema",
 	tags: ["attendance"],
 	response: {
-		200: z
-			.object({
-				id: z.number().optional(),
-				cpf: z.string(),
-				name: z.string(),
-				service: z.enum(["PAV", "RCN"]),
-				queue_type: z.enum(["N", "P"]),
-				ticket_number: z.string().optional(),
-				status: z
-					.enum(["AGUARDANDO", "CHAMADO", "ATENDIMENTO", "ATENDIDO", "AUSENTE"])
-					.optional(),
-				guiche: z.string().optional(),
-			})
-			.array(),
-		500: z.object({
-			statusCode: z.number(),
-			code: z.number(),
-			error: z.string(),
-			message: z.string(),
-		}),
+		200: getAttendanceResponseSchema,
+		500: {
+			$ref: "errorResponseSchema#",
+		},
 	},
-};
+} as const;

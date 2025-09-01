@@ -16,15 +16,10 @@ export class UpdateAttendanceService implements IUpdateAttendance {
 	): Promise<AttendanceDTO> {
 		const alreadyExistAnAttendance = await this.repo.findById(id);
 
-		if (!alreadyExistAnAttendance)
-			throw new ExistAnAttendanceError(
-				"Não existe um atendimento para esse id",
-			);
+		if (!alreadyExistAnAttendance) throw new ExistAnAttendanceError();
 
 		if (alreadyExistAnAttendance?.status !== prevStatus)
-			throw new AlreadyStatusModifiedError(
-				"O status do atendimento já foi modificado, atualize a página",
-			);
+			throw new AlreadyStatusModifiedError();
 
 		return await this.repo.update(id, status, guiche);
 	}

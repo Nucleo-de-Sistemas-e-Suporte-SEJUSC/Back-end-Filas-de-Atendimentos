@@ -20,10 +20,7 @@ export class CreateAttendanceService implements ICreateAttendance {
 			tenMinutesAgo,
 		);
 
-		if (alreadyExistAnAttendance)
-			throw new AlreadyExistAnAttendanceError(
-				"Já existe um atendimento para este usuário nos últimos 10 minutos.",
-			);
+		if (alreadyExistAnAttendance) throw new AlreadyExistAnAttendanceError();
 
 		const numberOfAttendances = await this.repo.countByServiceAndQueueType(
 			attendance.service,

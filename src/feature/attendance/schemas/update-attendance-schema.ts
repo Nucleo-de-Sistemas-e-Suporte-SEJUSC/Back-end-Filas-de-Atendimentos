@@ -1,41 +1,61 @@
-import z from "zod";
+export const updateAttendanceParamsSchema = {
+	type: "object",
+	properties: {
+		id: { type: "string" },
+	},
+	required: ["id"],
+} as const;
+
+export const updateAttendanceBodySchema = {
+	type: "object",
+	properties: {
+		prevStatus: { type: "string" },
+		status: {
+			type: "string",
+			enum: ["AGUARDANDO", "CHAMADO", "ATENDIMENTO", "ATENDIDO", "AUSENTE"],
+		},
+		guiche: { type: "string" },
+	},
+	required: ["prevStatus", "status"],
+} as const;
+
+export const updateAttendanceOkResponseSchema = {
+	type: "object",
+	properties: {
+		cpf: { type: "string" },
+		name: { type: "string" },
+		service: {
+			type: "string",
+			enum: ["PAV", "RCN"],
+		},
+		queue_type: {
+			type: "string",
+			enum: ["N", "P"],
+		},
+		ticket_number: { type: "string" },
+	},
+	required: ["cpf", "name", "service", "queue_type"],
+} as const;
+
+export const errorResponseSchema = {
+	$id: "errorResponseSchema",
+	type: "object",
+	properties: {
+		statusCode: { type: "number" },
+		code: { type: "number" },
+		error: { type: "string" },
+		message: { type: "string" },
+	},
+	required: ["statusCode", "code", "error", "message"],
+} as const;
 
 export const updateAttendanceSchema = {
 	tags: ["attendance"],
-	description: "Atualiza um atendimento",
-	params: z.object({
-		id: z.string(),
-	}),
-	body: z.object({
-		prevStatus: z.string(),
-		status: z.enum([
-			"AGUARDANDO",
-			"CHAMADO",
-			"ATENDIMENTO",
-			"ATENDIDO",
-			"AUSENTE",
-		]),
-		guiche: z.string().optional(),
-	}),
+	params: updateAttendanceParamsSchema,
+	body: updateAttendanceBodySchema,
 	response: {
-		200: z.object({
-			cpf: z.string(),
-			name: z.string(),
-			service: z.enum(["PAV", "RCN"]),
-			queue_type: z.enum(["N", "P"]),
-			ticket_number: z.string().optional(),
-		}),
-		400: z.object({
-			statusCode: z.number(),
-			code: z.number(),
-			error: z.string(),
-			message: z.string(),
-		}),
-		500: z.object({
-			statusCode: z.number(),
-			code: z.number(),
-			error: z.string(),
-			message: z.string(),
-		}),
+		200: updateAttendanceOkResponseSchema,
+		400: { $ref: "errorResponseSchema#" },
+		500: { $ref: "errorResponseSchema#" },
 	},
-};
+} as const;
