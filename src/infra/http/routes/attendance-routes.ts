@@ -41,7 +41,11 @@ export async function attendanceRoutes(fastify: FastifyInstance) {
 	const updateAttendanceController = new UpdateAttendanceController(
 		updateAttendanceService,
 	);
-	fastify.patch("/:id", { schema: updateAttendanceSchema }, (req, reply) =>
-		updateAttendanceController.update(req, reply),
+	fastify.patch(
+		"/:id",
+		{
+			schema: updateAttendanceSchema,
+		},
+		(req, reply) => updateAttendanceController.update(req, reply),
 	);
 }
