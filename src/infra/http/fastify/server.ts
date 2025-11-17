@@ -28,6 +28,6 @@ app.register(attendanceRoutes, {
     prefix: '/api/attendance',
 })
 
-app.listen({ port:8004, host: '0.0.0.0' }, () => {
-    console.log('Server running on port 8004. Its Works')
+app.listen({ port:8006, host: '0.0.0.0' }, () => {
+    console.log('Server running on port 8006. Its Works')
 })
